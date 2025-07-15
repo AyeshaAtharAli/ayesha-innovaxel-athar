@@ -1,52 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>URL Shortener</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔗 URL Shortener</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: sans-serif;
-      max-width: 500px;
-      margin: 50px auto;
+    * {
+      box-sizing: border-box;
     }
-    input, button {
-      padding: 10px;
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
       width: 100%;
-      margin-top: 10px;
+      max-width: 450px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #111827;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    button {
+      background: #6366f1;
+      color: #fff;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #4f46e5;
     }
     .short-url {
       margin-top: 20px;
-      font-weight: bold;
+      background: #f1f5f9;
+      padding: 12px;
+      border-radius: 8px;
+      word-break: break-word;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    .error {
+      color: #dc2626;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <h2>🔗 URL Shortener</h2>
-  <input id="longUrl" type="text" placeholder="Enter long URL" />
-  <button onclick="shortenUrl()">Shorten</button>
+  <div class="container">
+    <h2>🔗 URL Shortener</h2>
+    <input id="longUrl" type="text" placeholder="Enter your long URL..." />
+    <button onclick="shortenUrl()">Shorten URL</button>
 
-  <div class="short-url" id="result"></div>
+    <div class="short-url" id="result"></div>
+    <div class="error" id="error"></div>
+  </div>
 
   <script>
     async function shortenUrl() {
       const longUrl = document.getElementById("longUrl").value;
+      const resultDiv = document.getElementById("result");
+      const errorDiv = document.getElementById("error");
 
-      const response = await fetch("/shorten", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: longUrl })
-      });
+      resultDiv.innerHTML = "";
+      errorDiv.innerHTML = "";
 
-      const data = await response.json();
-      if (response.ok) {
-        document.getElementById("result").innerHTML = `
-         <strong>Short URL:</strong> 
-         <a href="/${data.shortCode}" target="_blank">
-        ${window.location.origin}/${data.shortCode}
-        </a>
-`       ;
+      if (!longUrl) {
+        errorDiv.textContent = "⚠️ Please enter a valid URL.";
+        return;
+      }
 
-      } else {
-        document.getElementById("result").textContent = data.error || "Something went wrong";
+      try {
+        const response = await fetch("/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: longUrl })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          resultDiv.innerHTML = `
+            <div>
+              ✅ Short URL: 
+              <a href="/${data.shortCode}" target="_blank">
+                ${window.location.origin}/${data.shortCode}
+              </a>
+            </div>
+          `;
+        } else {
+          errorDiv.textContent = data.error || "Something went wrong.";
+        }
+      } catch (err) {
+        errorDiv.textContent = "⚠️ Network error. Please try again.";
       }
     }
   </script>
