@@ -96,27 +96,53 @@ Create a DB user and whitelist 0.0.0.0/0
 
 Copy your connection URI
 
-2. Deploy on Render
-Go to https://render.com
 
-Create a new Web Service
+2. Deploy on Replit
+Go to https://replit.com
+Click + Create App
+Choose template: Flask (Python)
+Name your project: url-shortener
 
-Link your GitHub repo
+ 3. Add Your Code Files
+Delete default main.py
 
-Use these values:
+Add your files:
 
-| Setting       | Value                             |
-| ------------- | --------------------------------- |
-| Branch        | `dev`                             |
-| Build Command | `pip install -r requirements.txt` |
-| Start Command | `python app.py`                   |
-| Runtime       | Python                            |
+app.py
 
-Add Environment Variables:
-MONGO_URI=your_atlas_uri_here
-BASE_URL=https://your-render-url.onrender.com
+models.py
 
-Click Create Web Service and wait for it to deploy.
+utils.py
+
+templates/index.html
+
+requirements.txt
+
+4. Set Up Environment Variables (Secrets)
+Click the 🔐 “Secrets” tab on Replit and add:
+
+| Key         | Value                                                                |
+| ----------- | -------------------------------------------------------------------- |
+| `MONGO_URI` | Your MongoDB Atlas URI                                               |
+| `BASE_URL`  | Your Replit URL (e.g., `https://your-project-name.username.repl.co`) |
+
+5. Update app.py for Replit Port
+Replace this line:
+
+app.run(debug=True)
+
+With this:
+import os
+port = int(os.environ.get("PORT", 5000))
+app.run(host="0.0.0.0", port=port)
+
+6. Run and Get Your Live Link
+Click the green Run button
+
+Replit will generate a live public URL like:
+https://5ed486cf-44bb-44e8-8b73-b0ac09b3ff3b-00-5n3brgxwycpk.sisko.replit.dev
+This is your live app, ready to use and share 🚀
+
 
 Notes
 .env is excluded from GitHub via .gitignore
@@ -126,6 +152,6 @@ main branch contains only the README.md file
 Full source code is on the dev branch
 
 👩‍💻 Developer
-Ayesha Athar
+Ayesha Athar                   
  GitHub: https://github.com/AyeshaAtharAli/ayesha-innovaxel-athar
  
